@@ -137,4 +137,119 @@ namespace SLA {
         ArousalData& data = GetArousalData(who);
         return data.GetStaticArousalEffect(effectIdx);
     }
+
+    void ArousalManager::SetStaticArousalEffect(RE::Actor* who, int32_t effectIdx, int32_t functionId, float param,
+                                float limit, int32_t auxilliary) {
+        try {
+            ArousalData& data = GetArousalData(who);
+            data.SetStaticArousalEffect(effectIdx, functionId, param, limit, auxilliary);
+        } catch (std::exception) {
+        }
+    }
+    void ArousalManager::SetDynamicArousalEffect(RE::Actor* who, std::string effectId, float initialValue,
+                                 int32_t functionId, float param, float limit) {
+        try {
+            ArousalData& data = GetArousalData(who);
+            data.SetDynamicArousalEffect(effectId, initialValue, functionId, param, limit);
+        } catch (std::exception) {
+        }
+    }
+    void ArousalManager::ModDynamicArousalEffect(RE::Actor* who, std::string effectId, float modifier,
+                                 float limit) {
+        try {
+            ArousalData& data = GetArousalData(who);
+            data.ModDynamicArousalEffect(effectId, modifier, limit);
+        } catch (std::exception) {
+        }
+    }
+    void ArousalManager::SetStaticArousalValue(RE::Actor* who, int32_t effectIdx, float value) {
+        try {
+            ArousalData& data = GetArousalData(who);
+            data.SetStaticArousalValue(effectIdx, value);
+        } catch (std::exception) {
+        }
+    }
+    void ArousalManager::SetStaticAuxillaryFloat(RE::Actor* who, int32_t effectIdx, float value) {
+        try {
+            ArousalData& data = GetArousalData(who);
+            ArousalEffectData& effect = data.GetStaticArousalEffect(effectIdx);
+
+            effect.floatAux = value;
+        } catch (std::exception) {
+        }
+    }
+    void ArousalManager::SetStaticAuxillaryInt(RE::Actor* who, int32_t effectIdx, int32_t value) {
+        try {
+            ArousalData& data = GetArousalData(who);
+            ArousalEffectData& effect = data.GetStaticArousalEffect(effectIdx);
+
+            effect.intAux = value;
+        } catch (std::exception) {
+        }
+    }
+    float ArousalManager::ModStaticArousalValue(RE::Actor* who, int32_t effectIdx, float diff, float limit) {
+        try {
+            ArousalData& data = GetArousalData(who);
+            return data.ModStaticArousalValue(effectIdx, diff, limit);
+        } catch (std::exception) {
+            return 0.f;
+        }
+    }
+    float ArousalManager::GetArousal(RE::Actor* who) {
+        try {
+            return GetArousalData(who).GetArousal();
+        } catch (std::exception) {
+            return 0.f;
+        }
+    }
+    void ArousalManager::UpdateSingleActorArousal(RE::Actor* who, float GameDaysPassed) {
+        try {
+            ArousalData& data = GetArousalData(who);
+            data.UpdateSingleActorArousal(who, GameDaysPassed);
+        } catch (std::exception) {
+        }
+    }
+
+    bool ArousalManager::GroupEffects(RE::Actor* who, int32_t idx, int32_t idx2) {
+        try {
+            ArousalData& data = GetArousalData(who);
+            return data.GroupEffects(who, idx, idx2);
+        } catch (std::exception) {
+            return false;
+        }
+    }
+
+    bool ArousalManager::RemoveEffectGroup(RE::Actor* who, int32_t idx) {
+        try {
+            ArousalData& data = GetArousalData(who);
+            data.RemoveEffectGroup(idx);
+            return true;
+        } catch (std::exception) {
+            return false;
+        }
+    }
+
+    int32_t ArousalManager::CleanUpActors(float lastUpdateBefore) {
+        int32_t removed = 0;
+        for (auto itr = arousalData.begin(); itr != arousalData.end();) {
+            if (itr->second.GetLastUpdate() < lastUpdateBefore) {
+                itr = arousalData.erase(itr);
+                ++removed;
+            } else
+                ++itr;
+        }
+        return removed;
+    }
+
+    bool ArousalManager::TryLock(int32_t lock) {
+        if (lock < 0 || lock >= locks.size()) return false;
+        if (locks[lock].test_and_set()) return false;
+        return true;
+    }
+
+    void ArousalManager::Unlock(int32_t lock) {
+        if (lock < 0 || lock >= locks.size()) return;
+
+        locks[lock].clear();
+    }
 }

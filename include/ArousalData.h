@@ -46,5 +46,17 @@ namespace SLA {
         float GetDynamicEffectValueByName(std::string number);
         ArousalEffectGroupPtr GetEffectGroup(int32_t effectIdx);
         ArousalEffectData& GetStaticArousalEffect(int32_t effectIdx);
+        void SetStaticArousalEffect(int32_t effectIdx, int32_t functionId, float param, float limit,
+                                    int32_t auxilliary);
+        void SetDynamicArousalEffect(std::string effectId, float initialValue, int32_t functionId,
+                                     float param, float limit);
+        void ModDynamicArousalEffect(std::string effectId, float modifier, float limit);
+        void SetStaticArousalValue(int32_t effectIdx, float value);
+        float ModStaticArousalValue(int32_t effectIdx, float diff, float limit);
+        float GetArousal();
+        void UpdateSingleActorArousal(RE::Actor* who, float GameDaysPassed);
+        bool GroupEffects(RE::Actor* who, int32_t idx, int32_t idx2);
+        bool RemoveEffectGroup(int32_t idx);
+        float GetLastUpdate();
     };
 }
