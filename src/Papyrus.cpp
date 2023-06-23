@@ -36,9 +36,16 @@ namespace {
     float GetStaticEffectValue(StaticFunctionTag* base, Actor* who, int32_t effectIdx) {
         return ArousalManager::GetSingleton().GetStaticEffectValue(who, effectIdx);     
     }
-
+    float GetStaticEffectParam(StaticFunctionTag* base, Actor* who, int32_t effectIdx) {
+        return ArousalManager::GetSingleton().GetStaticEffectParam(who, effectIdx);
+    }
+    int32_t GetStaticEffectAux(StaticFunctionTag* base, Actor* who, int32_t effectIdx) {
+        return ArousalManager::GetSingleton().GetStaticEffectAux(who, effectIdx);
+    }
 }
 
 bool SLA::RegisterFunctions(IVirtualMachine* vm) {
+    vm->RegisterFunction("GetStaticEffectCount", PapyrusClass, GetStaticEffectCount);
+
 	return true;
 }

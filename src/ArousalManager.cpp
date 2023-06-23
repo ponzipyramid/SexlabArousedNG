@@ -114,4 +114,27 @@ namespace SLA {
             return 0.f;
         }
     }
+
+    float ArousalManager::GetStaticEffectParam(RE::Actor* who, int32_t effectIdx) {
+        try {
+            ArousalEffectData& effect = GetStaticArousalEffect(who, effectIdx);
+            return effect.param;
+        } catch (std::exception) {
+            return 0.f;
+        }
+    }
+
+    int32_t ArousalManager::GetStaticEffectAux(RE::Actor* who, int32_t effectIdx) {
+        try {
+            ArousalEffectData& effect = GetStaticArousalEffect(who, effectIdx);
+            return effect.intAux;
+        } catch (std::exception) {
+            return 0;
+        }
+    }
+
+    ArousalEffectData& ArousalManager::GetStaticArousalEffect(RE::Actor* who, int32_t effectIdx) {
+        ArousalData& data = GetArousalData(who);
+        return data.GetStaticArousalEffect(effectIdx);
+    }
 }

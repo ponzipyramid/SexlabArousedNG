@@ -18,10 +18,13 @@ namespace SLA {
         float GetDynamicEffectValueByName(RE::Actor* who, std::string effectId);
         float GetDynamicEffectValue(RE::Actor* who, int32_t number);
         float GetStaticEffectValue(RE::Actor* who, int32_t number);
+        float GetStaticEffectParam(RE::Actor* who, int32_t effectIdx);
+        int32_t GetStaticEffectAux(RE::Actor* who, int32_t effectIdx);
 
     private:
         int32_t GetHighestUnusedEffectId();
         std::string GetUnusedEffectId(int32_t id);
+        ArousalEffectData& GetStaticArousalEffect(RE::Actor* who, int32_t effectIdx);
         ArousalData& GetArousalData(RE::Actor* who);
 
         ArousalManager() = default;
