@@ -91,6 +91,8 @@ namespace SLA {
         ArousalData& operator=(ArousalData&& other) = default;
 
         void Serialize(SKSE::SerializationInterface* intfc) const {
+
+            SKSE::log::info("Serializing arousal data {}", arousal);
             using namespace Serialization;
             intfc->WriteRecordData(&arousal, sizeof(arousal));
             intfc->WriteRecordData(&lastUpdate, sizeof(lastUpdate));

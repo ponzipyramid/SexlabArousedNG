@@ -274,7 +274,6 @@ namespace SLA {
     void ArousalManager::OnGameSaved(SKSE::SerializationInterface* serde) {
         using namespace Serialization;
 
-
         ArousalManager& inst = ArousalManager::GetSingleton();
         SKSE::log::info("save");
 
@@ -294,6 +293,7 @@ namespace SLA {
                 data.Serialize(serde);
             }
         }
+        SKSE::log::info("finished saving");
 
     }
     void ArousalManager::OnGameLoaded(SKSE::SerializationInterface* serde) {
@@ -313,14 +313,14 @@ namespace SLA {
                         SKSE::log::info("Version correct");
                         try {
                             staticEffectCount = Serialization::ReadDataHelper<uint32_t>(serde, length);
-                            SKSE::log::info("Loading %u effects... ", staticEffectCount);
+                            SKSE::log::info("Loading {} effects... ", staticEffectCount);
                             for (uint32_t i = 0; i < staticEffectCount; ++i) {
                                 std::string effect = Serialization::ReadString(serde, length);
                                 uint32_t id = Serialization::ReadDataHelper<uint32_t>(serde, length);
                                 inst.staticEffectIds[effect] = id;
                             }
                             uint32_t entryCount = Serialization::ReadDataHelper<uint32_t>(serde, length);
-                            SKSE::log::info("Loading %u data sets... ", entryCount);
+                            SKSE::log::info("Loading {} data sets... ", entryCount);
                             for (uint32_t i = 0; i < entryCount; ++i) {
                                 uint32_t formId = Serialization::ReadDataHelper<uint32_t>(serde, length);
                                 ArousalData data(serde, length);
@@ -336,12 +336,15 @@ namespace SLA {
                 } break;
 
                 default:
-                    SKSE::log::info("unhandled type %08X", type);
+                    SKSE::log::info("unhandled type {}", type);
                     error = true;
                     break;
             }
         }
 
         if (error) SKSE::log::info("Encountered error while loading data");
+
+        SKSE::log::info("finished loading");
+
     }
 }

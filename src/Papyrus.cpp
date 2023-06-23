@@ -9,6 +9,8 @@ using namespace SLA;
 
 namespace {
     constexpr std::string_view PapyrusClass = "slaInternalModules";
+    constexpr std::string_view KWDPapyrusClass = "KeywordUtil";
+
     uint32_t GetStaticEffectCount(StaticFunctionTag* base) {
         return ArousalManager::GetSingleton().GetStaticEffectCount();
     }
@@ -92,6 +94,32 @@ namespace {
         }
         return result;
     }
+
+    void AddKeywordToForm(StaticFunctionTag* base, RE::TESForm* form, RE::BGSKeyword* kwd) {
+        if (const auto keywordForm = form->As<RE::BGSKeywordForm>(); keywordForm) {
+            keywordForm->AddKeyword(kwd);
+        }
+    }
+    void AddKeywordToForms(StaticFunctionTag* base, std::vector<RE::TESForm*> forms, RE::BGSKeyword* kwd) {
+        for (auto form : forms) {
+            if (const auto keywordForm = form->As<RE::BGSKeywordForm>(); keywordForm) {
+                keywordForm->AddKeyword(kwd);
+            }
+        }
+    }
+    void RemoveKeywordFromForm(StaticFunctionTag* base, RE::TESForm* form, RE::BGSKeyword* kwd) {
+        if (const auto keywordForm = form->As<RE::BGSKeywordForm>(); keywordForm) {
+            keywordForm->RemoveKeyword(kwd);
+        }
+    }
+    void RemoveKeywordFromForms(StaticFunctionTag* base, std::vector<RE::TESForm*> forms, RE::BGSKeyword* kwd) {
+        for (auto form : forms) {
+            if (const auto keywordForm = form->As<RE::BGSKeywordForm>(); keywordForm) {
+                keywordForm->RemoveKeyword(kwd);
+            }
+        }
+    }
+
 }  // namespace
 
 bool SLA::RegisterFunctions(IVirtualMachine* vm) {
@@ -124,6 +152,11 @@ bool SLA::RegisterFunctions(IVirtualMachine* vm) {
     vm->RegisterFunction("TryLock", PapyrusClass, TryLock);
     vm->RegisterFunction("Unlock", PapyrusClass, Unlock);
     vm->RegisterFunction("DuplicateActorArray", PapyrusClass, DuplicateActorArray);
+
+    vm->RegisterFunction("AddKeywordToForm", KWDPapyrusClass, AddKeywordToForm);
+    vm->RegisterFunction("AddKeywordToForms", KWDPapyrusClass, AddKeywordToForms);
+    vm->RegisterFunction("RemoveKeywordFromForm", KWDPapyrusClass, RemoveKeywordFromForm);
+    vm->RegisterFunction("RemoveKeywordFromForms", KWDPapyrusClass, RemoveKeywordFromForms);
 
     return true;
 }

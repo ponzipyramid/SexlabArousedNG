@@ -13,7 +13,8 @@ namespace {
         if (!path) {
             report_and_fail("Unable to lookup SKSE logs directory.");
         }
-        *path += L"/DDi.log";
+        *path /= PluginDeclaration::GetSingleton()->GetName();
+        *path += L".log";
 
         std::shared_ptr<spdlog::logger> log;
         if (IsDebuggerPresent()) {
@@ -41,11 +42,11 @@ namespace {
     void InitializeSerialization() {
         log::trace("Initializing cosave serialization...");
         auto* serde = GetSerializationInterface();
-        serde->SetUniqueID(_byteswap_ulong('SMPL'));
+        serde->SetUniqueID(_byteswap_ulong('SLAN'));
         serde->SetSaveCallback(SLA::ArousalManager::OnGameSaved);
         serde->SetRevertCallback(SLA::ArousalManager::OnRevert);
         serde->SetLoadCallback(SLA::ArousalManager::OnGameLoaded);
-        log::trace("Cosave serialization initialized.");
+        log::info("Cosave serialization initialized.");
     }
 }
 
