@@ -9,8 +9,8 @@ using namespace SLA;
 
 namespace {
     constexpr std::string_view PapyrusClass = "slaInternalModules";
-    uint32_t GetStaticEffectCount(StaticFunctionTag* base) { 
-        return ArousalManager::GetSingleton().GetStaticEffectCount(); 
+    uint32_t GetStaticEffectCount(StaticFunctionTag* base) {
+        return ArousalManager::GetSingleton().GetStaticEffectCount();
     }
     uint32_t RegisterStaticEffect(StaticFunctionTag* base, std::string name) {
         return ArousalManager::GetSingleton().RegisterStaticEffect(name);
@@ -25,7 +25,7 @@ namespace {
         return ArousalManager::GetSingleton().GetDynamicEffectCount(who);
     }
     std::string GetDynamicEffect(StaticFunctionTag* base, Actor* who, int32_t number) {
-        return ArousalManager::GetSingleton().GetDynamicEffect(who, number);     
+        return ArousalManager::GetSingleton().GetDynamicEffect(who, number);
     }
     float GetDynamicEffectValueByName(StaticFunctionTag* base, Actor* who, std::string effectId) {
         return ArousalManager::GetSingleton().GetDynamicEffectValueByName(who, effectId);
@@ -34,7 +34,7 @@ namespace {
         return ArousalManager::GetSingleton().GetDynamicEffectValue(who, number);
     }
     float GetStaticEffectValue(StaticFunctionTag* base, Actor* who, int32_t effectIdx) {
-        return ArousalManager::GetSingleton().GetStaticEffectValue(who, effectIdx);     
+        return ArousalManager::GetSingleton().GetStaticEffectValue(who, effectIdx);
     }
     float GetStaticEffectParam(StaticFunctionTag* base, Actor* who, int32_t effectIdx) {
         return ArousalManager::GetSingleton().GetStaticEffectParam(who, effectIdx);
@@ -49,7 +49,8 @@ namespace {
     }
     void SetDynamicArousalEffect(StaticFunctionTag* base, Actor* who, std::string effectId, float initialValue,
                                  int32_t functionId, float param, float limit) {
-        return ArousalManager::GetSingleton().SetDynamicArousalEffect(who, effectId, initialValue, functionId, param, limit);
+        return ArousalManager::GetSingleton().SetDynamicArousalEffect(who, effectId, initialValue, functionId, param,
+                                                                      limit);
     }
     void ModDynamicArousalEffect(StaticFunctionTag* base, Actor* who, std::string effectId, float modifier,
                                  float limit) {
@@ -67,9 +68,7 @@ namespace {
     float ModStaticArousalValue(StaticFunctionTag* base, Actor* who, int32_t effectIdx, float diff, float limit) {
         return ArousalManager::GetSingleton().ModStaticArousalValue(who, effectIdx, diff, limit);
     }
-    float GetArousal(StaticFunctionTag* base, Actor* who) {
-        return ArousalManager::GetSingleton().GetArousal(who);
-    }
+    float GetArousal(StaticFunctionTag* base, Actor* who) { return ArousalManager::GetSingleton().GetArousal(who); }
     void UpdateSingleActorArousal(StaticFunctionTag* base, Actor* who, float GameDaysPassed) {
         return ArousalManager::GetSingleton().UpdateSingleActorArousal(who, GameDaysPassed);
     }
@@ -82,12 +81,8 @@ namespace {
     int32_t CleanUpActors(StaticFunctionTag* base, float lastUpdateBefore) {
         return ArousalManager::GetSingleton().CleanUpActors(lastUpdateBefore);
     }
-    bool TryLock(StaticFunctionTag* base, int32_t lock) { 
-        return ArousalManager::GetSingleton().TryLock(lock);
-    }
-    void Unlock(StaticFunctionTag* base, int32_t lock) { 
-        return ArousalManager::GetSingleton().Unlock(lock);
-    }
+    bool TryLock(StaticFunctionTag* base, int32_t lock) { return ArousalManager::GetSingleton().TryLock(lock); }
+    void Unlock(StaticFunctionTag* base, int32_t lock) { return ArousalManager::GetSingleton().Unlock(lock); }
     std::vector<Actor*> DuplicateActorArray(StaticFunctionTag* base, std::vector<Actor*> arr, int32_t count) {
         std::vector<Actor*> result;
         result.reserve(count);
@@ -97,11 +92,11 @@ namespace {
         }
         return result;
     }
-}
+}  // namespace
 
 bool SLA::RegisterFunctions(IVirtualMachine* vm) {
     vm->RegisterFunction("GetStaticEffectCount", PapyrusClass, GetStaticEffectCount);
-    vm->RegisterFunction( "RegisterStaticEffect", PapyrusClass, RegisterStaticEffect);
+    vm->RegisterFunction("RegisterStaticEffect", PapyrusClass, RegisterStaticEffect);
     vm->RegisterFunction("UnregisterStaticEffect", PapyrusClass, UnregisterStaticEffect);
     vm->RegisterFunction("IsStaticEffectActive", PapyrusClass, IsStaticEffectActive);
     vm->RegisterFunction("GetDynamicEffectCount", PapyrusClass, GetDynamicEffectCount);
@@ -129,5 +124,6 @@ bool SLA::RegisterFunctions(IVirtualMachine* vm) {
     vm->RegisterFunction("TryLock", PapyrusClass, TryLock);
     vm->RegisterFunction("Unlock", PapyrusClass, Unlock);
     vm->RegisterFunction("DuplicateActorArray", PapyrusClass, DuplicateActorArray);
-	return true;
+
+    return true;
 }

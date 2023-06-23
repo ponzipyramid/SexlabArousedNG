@@ -9,7 +9,7 @@ namespace SLA {
     class __declspec(dllexport) ArousalManager {
     public:
         [[nodiscard]] static ArousalManager& GetSingleton() noexcept;
-        [[nodiscard]] inline int GetStaticEffectCount() { return staticEffectCount; }
+        int GetStaticEffectCount();
         uint32_t RegisterStaticEffect(std::string name);
         bool UnregisterStaticEffect(std::string name);
         bool IsStaticEffectActive(RE::Actor* who, int32_t effectIdx);
@@ -38,6 +38,10 @@ namespace SLA {
         bool TryLock(int32_t lock);
         void Unlock(int32_t lock);
 
+        static void OnRevert(SKSE::SerializationInterface*);
+        static void OnGameSaved(SKSE::SerializationInterface* serde);
+        static void OnGameLoaded(SKSE::SerializationInterface* serde);
+
     private:
         int32_t GetHighestUnusedEffectId();
         std::string GetUnusedEffectId(int32_t id);
@@ -53,8 +57,6 @@ namespace SLA {
         ArousalData* lastData = nullptr;
 
         std::array<std::atomic_flag, 3> locks;
-
-        int staticEffectCount;
     };
 
 #pragma warning(pop)

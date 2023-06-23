@@ -1,10 +1,14 @@
 #include "ArousalManager.h"
+#include "SerializationHelper.h"
 
 namespace SLA {
+    
     ArousalManager& ArousalManager::GetSingleton() noexcept {
         static ArousalManager instance;
         return instance;
     }
+
+    int ArousalManager::GetStaticEffectCount() { return staticEffectCount; }
 
     uint32_t ArousalManager::RegisterStaticEffect(std::string name) {
         auto itr = staticEffectIds.find(name);
@@ -251,5 +255,93 @@ namespace SLA {
         if (lock < 0 || lock >= locks.size()) return;
 
         locks[lock].clear();
+    }
+
+    const uint32_t kSerializationDataVersion = 1;
+    void ArousalManager::OnRevert(SKSE::SerializationInterface*) {
+        ArousalManager& inst = ArousalManager::GetSingleton();
+        SKSE::log::info("revert");
+
+        staticEffectCount = 0;
+        inst.staticEffectIds.clear();
+
+        inst.lastLookup = 0;
+        inst.lastData = nullptr;
+        inst.arousalData.clear();
+
+        for (auto& lock : inst.locks) lock.clear();
+    }
+    void ArousalManager::OnGameSaved(SKSE::SerializationInterface* serde) {
+        using namespace Serialization;
+
+
+        ArousalManager& inst = ArousalManager::GetSingleton();
+        SKSE::log::info("save");
+
+        if (serde->OpenRecord('DATA', kSerializationDataVersion)) {
+            serde->WriteRecordData(&staticEffectCount, sizeof(staticEffectCount));
+            for (auto const& kvp : inst.staticEffectIds) {
+                WriteString(serde, kvp.first);
+                int32_t id = kvp.second;
+                serde->WriteRecordData(&id, sizeof(id));
+            }
+            uint32_t entryCount = static_cast<uint32_t>(inst.arousalData.size());
+            serde->WriteRecordData(&entryCount, sizeof(entryCount));
+            for (auto const& entry : inst.arousalData) {
+                ArousalData const& data = entry.second;
+                uint32_t formId = entry.first;
+                serde->WriteRecordData(&formId, sizeof(formId));
+                data.Serialize(serde);
+            }
+        }
+
+    }
+    void ArousalManager::OnGameLoaded(SKSE::SerializationInterface* serde) {
+        ArousalManager& inst = ArousalManager::GetSingleton();
+
+        SKSE::log::info("load");
+
+        uint32_t type;
+        uint32_t version;
+        uint32_t length;
+        bool error = false;
+
+        while (!error && serde->GetNextRecordInfo(type, version, length)) {
+            switch (type) {
+                case 'DATA': {
+                    if (version == kSerializationDataVersion) {
+                        SKSE::log::info("Version correct");
+                        try {
+                            staticEffectCount = Serialization::ReadDataHelper<uint32_t>(serde, length);
+                            SKSE::log::info("Loading %u effects... ", staticEffectCount);
+                            for (uint32_t i = 0; i < staticEffectCount; ++i) {
+                                std::string effect = Serialization::ReadString(serde, length);
+                                uint32_t id = Serialization::ReadDataHelper<uint32_t>(serde, length);
+                                inst.staticEffectIds[effect] = id;
+                            }
+                            uint32_t entryCount = Serialization::ReadDataHelper<uint32_t>(serde, length);
+                            SKSE::log::info("Loading %u data sets... ", entryCount);
+                            for (uint32_t i = 0; i < entryCount; ++i) {
+                                uint32_t formId = Serialization::ReadDataHelper<uint32_t>(serde, length);
+                                ArousalData data(serde, length);
+                                uint32_t newFormId;
+                                if (!serde->ResolveFormID(formId, newFormId)) continue;
+                                inst.arousalData[newFormId] = std::move(data);
+                            }
+                        } catch (std::exception) {
+                            error = true;
+                        }
+                    } else
+                        error = true;
+                } break;
+
+                default:
+                    SKSE::log::info("unhandled type %08X", type);
+                    error = true;
+                    break;
+            }
+        }
+
+        if (error) SKSE::log::info("Encountered error while loading data");
     }
 }

@@ -5,7 +5,7 @@ message("Using toolchain file ${CMAKE_TOOLCHAIN_FILE}.")
 ## Define project
 ########################################################################################################################
 project(
-        SexlabArousalNG
+        SexlabArousedNG
         VERSION 0.0.0.1
         DESCRIPTION "Next generation arousal for Sexlab"
         LANGUAGES CXX)
@@ -24,6 +24,8 @@ set(headers
         include/Papyrus.h
         include/ArousalManager.h
         include/ArousalData.h
+        include/CosSin.h
+        include/SerializationHelper.h
     )
 
 set(sources
@@ -31,6 +33,7 @@ set(sources
         src/Papyrus.cpp
         src/ArousalManager.cpp
         src/ArousalData.cpp
+        src/SerializationHelper.cpp
 
         ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
 
@@ -57,7 +60,6 @@ message("\tTests: ${BUILD_TESTS}")
 ########################################################################################################################
 find_package(CommonLibSSE CONFIG REQUIRED)
 find_package(ryml CONFIG REQUIRED)
-find_path(ARTICUNO_INCLUDE_DIRS "articuno/articuno.h")
 
 add_commonlibsse_plugin(${PROJECT_NAME} SOURCES ${headers} ${sources})
 add_library("${PROJECT_NAME}::${PROJECT_NAME}" ALIAS "${PROJECT_NAME}")
@@ -66,8 +68,7 @@ target_include_directories(${PROJECT_NAME}
         PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/src>
-        $<INSTALL_INTERFACE:src>
-        ${ARTICUNO_INCLUDE_DIRS})
+        $<INSTALL_INTERFACE:src>)
 
 target_include_directories(${PROJECT_NAME}
         PUBLIC

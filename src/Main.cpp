@@ -1,5 +1,6 @@
 #include "Papyrus.h"
 #include <stddef.h>
+#include <ArousalManager.h>
 
 using namespace RE::BSScript;
 using namespace SKSE;
@@ -36,6 +37,16 @@ namespace {
             stl::report_and_fail("Failure to register Papyrus bindings.");
         }
     }
+
+    void InitializeSerialization() {
+        log::trace("Initializing cosave serialization...");
+        auto* serde = GetSerializationInterface();
+        serde->SetUniqueID(_byteswap_ulong('SMPL'));
+        serde->SetSaveCallback(SLA::ArousalManager::OnGameSaved);
+        serde->SetRevertCallback(SLA::ArousalManager::OnRevert);
+        serde->SetLoadCallback(SLA::ArousalManager::OnGameLoaded);
+        log::trace("Cosave serialization initialized.");
+    }
 }
 
 SKSEPluginLoad(const LoadInterface* skse) {
@@ -46,6 +57,7 @@ SKSEPluginLoad(const LoadInterface* skse) {
     log::info("{} {} is loading...", plugin->GetName(), version);
 
     Init(skse);
+    InitializeSerialization();
     InitializePapyrus();
 
     log::info("{} has finished loading.", plugin->GetName());
