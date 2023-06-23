@@ -1,1 +1,1 @@
-NG implementation of DD's plugin.
+NG reimplementation of SL Aroused. 
