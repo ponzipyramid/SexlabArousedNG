@@ -1,5 +1,6 @@
 #include "Papyrus.h"
 #include "ArousalManager.h"
+#include "CosSin.h"
 
 using namespace RE;
 using namespace RE::BSScript;
@@ -123,6 +124,8 @@ namespace {
 }  // namespace
 
 bool SLA::RegisterFunctions(IVirtualMachine* vm) {
+    BuildSinCosTable();
+
     vm->RegisterFunction("GetStaticEffectCount", PapyrusClass, GetStaticEffectCount);
     vm->RegisterFunction("RegisterStaticEffect", PapyrusClass, RegisterStaticEffect);
     vm->RegisterFunction("UnregisterStaticEffect", PapyrusClass, UnregisterStaticEffect);
