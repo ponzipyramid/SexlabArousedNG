@@ -85,14 +85,12 @@ namespace SLA {
             for (auto const& eff : dynamicEffects) recalculated += eff.second.value;
             for (auto const& grp : groupsToUpdate) recalculated += grp->value;
             if (std::abs(recalculated - arousal) > 0.5)
-                SKSE::log::info("Arousal data mismatch: Expected: %f Got: %f", recalculated, arousal);
+                SKSE::log::info("Arousal data mismatch: Expected: {} Got: {}", recalculated, arousal);
             arousal = recalculated;
         }
         ArousalData& operator=(ArousalData&& other) = default;
 
         void Serialize(SKSE::SerializationInterface* intfc) const {
-
-            SKSE::log::info("Serializing arousal data {}", arousal);
             using namespace Serialization;
             intfc->WriteRecordData(&arousal, sizeof(arousal));
             intfc->WriteRecordData(&lastUpdate, sizeof(lastUpdate));

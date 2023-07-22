@@ -121,7 +121,16 @@ namespace SLA {
         return actualDiff;
     }
 
-    float ArousalData::GetArousal() const { return arousal; }
+    float ArousalData::GetArousal() const { 
+        float recalculated = 0.f;
+        for (uint32_t i = 0; i < staticEffects.size(); ++i) {
+            if (!staticEffectGroups[i]) recalculated += staticEffects[i].value;
+        }
+        for (auto const& eff : dynamicEffects) recalculated += eff.second.value;
+        for (auto const& grp : groupsToUpdate) recalculated += grp->value;
+        SKSE::log::info("Fetching arousal actual = {} calculated = {}", arousal, recalculated);
+        return arousal; 
+    }
 
     void ArousalData::UpdateGroupFactor(ArousalEffectGroup& group, float oldFactor, float newFactor) {
         float value = group.value / oldFactor * newFactor;
@@ -231,6 +240,14 @@ namespace SLA {
                 ++itr;
         }
 
+        float recalculated = 0.f;
+        for (uint32_t i = 0; i < staticEffects.size(); ++i) {
+            if (!staticEffectGroups[i]) recalculated += staticEffects[i].value;
+        }
+        for (auto const& eff : dynamicEffects) recalculated += eff.second.value;
+        for (auto const& grp : groupsToUpdate) recalculated += grp->value;
+
+        arousal = recalculated;
 
     }
     bool ArousalData::GroupEffects(RE::Actor* who, int32_t idx, int32_t idx2) {
