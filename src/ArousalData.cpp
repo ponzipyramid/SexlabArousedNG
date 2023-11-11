@@ -121,14 +121,16 @@ namespace SLA {
         return actualDiff;
     }
 
-    float ArousalData::GetArousal() const { 
+    float ArousalData::GetArousal() { 
         float recalculated = 0.f;
         for (uint32_t i = 0; i < staticEffects.size(); ++i) {
             if (!staticEffectGroups[i]) recalculated += staticEffects[i].value;
         }
         for (auto const& eff : dynamicEffects) recalculated += eff.second.value;
         for (auto const& grp : groupsToUpdate) recalculated += grp->value;
-        SKSE::log::info("Fetching arousal actual = {} calculated = {}", arousal, recalculated);
+    
+        arousal = recalculated;
+
         return arousal; 
     }
 

@@ -121,6 +121,10 @@ namespace {
         }
     }
 
+    std::string FormatHex(StaticFunctionTag* base, int num) {
+        return "0x" + std::format("{:x}", num);
+    }
+
 }  // namespace
 
 bool SLA::RegisterFunctions(IVirtualMachine* vm) {
@@ -160,6 +164,9 @@ bool SLA::RegisterFunctions(IVirtualMachine* vm) {
     vm->RegisterFunction("AddKeywordToForms", KWDPapyrusClass, AddKeywordToForms);
     vm->RegisterFunction("RemoveKeywordFromForm", KWDPapyrusClass, RemoveKeywordFromForm);
     vm->RegisterFunction("RemoveKeywordFromForms", KWDPapyrusClass, RemoveKeywordFromForms);
+
+    //misc
+    vm->RegisterFunction("FormatHex", PapyrusClass, FormatHex);
 
     return true;
 }

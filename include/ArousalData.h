@@ -129,7 +129,7 @@ namespace SLA {
         void ModDynamicArousalEffect(std::string effectId, float modifier, float limit);
         void SetStaticArousalValue(int32_t effectIdx, float value);
         float ModStaticArousalValue(int32_t effectIdx, float diff, float limit);
-        float GetArousal() const;
+        float GetArousal();
         void UpdateSingleActorArousal(RE::Actor* who, float GameDaysPassed);
         bool GroupEffects(RE::Actor* who, int32_t idx, int32_t idx2);
         void RemoveEffectGroup(int32_t idx);
